@@ -9,11 +9,9 @@ namespace WebApplicationTestLongPooling.Controllers
     public class AddMessageController : ControllerBase
     {
         private readonly MessageQueuePool message;
-        CancellationTokenSource cancellationTokenSource;
 
         public AddMessageController(MessageQueuePool message)
         {
-            cancellationTokenSource = new CancellationTokenSource();
             this.message = message;
         }
 

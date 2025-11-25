@@ -12,17 +12,15 @@ namespace WebApplicationTestLongPooling.Controllers
     [ApiController]
     public class LoongPoolingController : ControllerBase
     {
-        //private LongPoolingServiceMessage longPoolingServiceMessage;
-        private readonly MessageQueuePool message;
+        private readonly MessageQueuePool messageQueuePool;
         UserCancellationTokenSource cancellationTokenSource;
 
         public LoongPoolingController(MessageQueuePool message)
         {
-            this.message = message;
+            this.messageQueuePool = message;
 
-            this.message.AddMessageEvent += (m) =>
+            this.messageQueuePool.AddMessageEvent += (m) =>
             {
-                //this.longPoolingServiceMessage = m;
                 cancellationTokenSource?.Cancel(m.User);
             };
         }
@@ -33,12 +31,13 @@ namespace WebApplicationTestLongPooling.Controllers
             var user = HttpContext.Request.Headers["user"];
             cancellationTokenSource = new UserCancellationTokenSource(user);
 
-            var count = this.message.Count(user);
+            var count = this.messageQueuePool.Count(user);
 
+            Message longPoolingServiceMessage = null;
             if (count > 0)
             {
-                var messageText = this.message.Dequeue(user);
-                return (MessageDTO)messageText;
+                longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
+                return (MessageDTO)longPoolingServiceMessage;
             }
 
             try
@@ -47,7 +46,7 @@ namespace WebApplicationTestLongPooling.Controllers
             }
             catch (TaskCanceledException e) { }
 
-            var longPoolingServiceMessage = this.message.Dequeue(user);
+            longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
             return (MessageDTO)longPoolingServiceMessage;
         }
     }
