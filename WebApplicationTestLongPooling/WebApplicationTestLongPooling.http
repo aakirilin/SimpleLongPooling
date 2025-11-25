@@ -1,0 +1,13 @@
+@WebApplicationTestLongPooling_HostAddress = http://localhost:5076
+
+POST {{WebApplicationTestLongPooling_HostAddress}}/AddMessage
+Accept: application/json
+Content-type: application/json
+
+{
+    "message" : "-10-",
+    "user" : "user1"
+}
+
+###
+
