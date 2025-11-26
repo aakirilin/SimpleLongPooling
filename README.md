@@ -82,7 +82,11 @@ public class AddMessageController : ControllerBase
     [HttpPost]
     public async Task Post(Reqest reqest)
     {
-        message.Enqueue(new Message() { Ñhannel = reqest.Ñhannel, Text = reqest.Message, User = reqest.User });            
+        message.Enqueue(new Message() { 
+            Channel = reqest.Channel, 
+            Text = reqest.Message, 
+            User = reqest.User 
+        });            
     }
 }
 
