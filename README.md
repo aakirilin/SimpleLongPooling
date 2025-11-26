@@ -18,11 +18,6 @@ client.SubscribeToChannel("channel1", (m) => Console.WriteLine($"the Ñhannel = c
 client.SubscribeToChannel("channel2", (m) => Console.WriteLine($"the Ñhannel = channel2, {m}"));
 
 client.Start(url);
-
-while (true) 
-{ 
-    await Task.Delay(1000);
-}
 ```
 
 Server: long pooling constroller 
