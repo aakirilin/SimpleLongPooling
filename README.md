@@ -88,7 +88,7 @@ public class AddMessageController : ControllerBase
 
 public class Reqest
 {
-    public string Ñhannel { get; set; } 
+    public string Channel { get; set; } 
     public string Message { get; set; } 
     public string User { get; set; } 
 }
