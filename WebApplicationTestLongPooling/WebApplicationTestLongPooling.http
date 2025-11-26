@@ -5,8 +5,9 @@ Accept: application/json
 Content-type: application/json
 
 {
-    "message" : "-10-",
-    "user" : "user1"
+    "Ñhannel" : "channel2",
+    "Message" : "-11-",
+    "User" : "user"
 }
 
 ###

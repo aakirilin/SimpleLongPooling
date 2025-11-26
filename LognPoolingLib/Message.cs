@@ -1,4 +1,6 @@
-﻿namespace LognPoolingLib
+﻿using System.Text.Json.Serialization;
+
+namespace LognPoolingLib
 {
     public class Message()
     {
@@ -18,7 +20,10 @@
 
     public class MessageDTO()
     {
+        [JsonPropertyName("Сhannel")]
         public string Сhannel { get; set; }
+
+        [JsonPropertyName("Text")]
         public string Text { get; set; }
     }
 }

@@ -4,6 +4,30 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Long polling lib</Title>
+    <PackageProjectUrl></PackageProjectUrl>
+    <Copyright>A.A.Kirilin</Copyright>
+    <Description>A simple implementation of long pooling for .net.</Description>
+    <RepositoryUrl>https://github.com/aakirilin/SimpleLongPooling</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>longpopling, long popling, .net</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>$(VersionPrefix)</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
