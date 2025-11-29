@@ -21,9 +21,9 @@ client.MessageDelivered += (m) =>
     Console.WriteLine($"{m.Channel} {m.Text}");
 };
 
-client.SubscribeToChannel("channel1", (m) => Console.WriteLine($"the Ñhannel = channel1, {m}"));
-client.SubscribeToChannel("channel2", (m) => Console.WriteLine($"the Ñhannel = channel2, {m}"));
-client.SubscribeToChannel("channel3", (m) => Console.WriteLine($"the Ñhannel = channel3, {m}"));
+client.SubscribeToChannel("channel1", (m) => Console.WriteLine($"the Channel = channel1, {m}"));
+client.SubscribeToChannel("channel2", (m) => Console.WriteLine($"the Channel = channel2, {m}"));
+client.SubscribeToChannel("channel3", (m) => Console.WriteLine($"the Channel = channel3, {m}"));
 
 client.Start(url);
 
