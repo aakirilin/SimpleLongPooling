@@ -28,8 +28,8 @@ namespace WebApplicationTestLongPooling.Controllers
         [HttpGet]
         public async Task<string> Get()
         {
-            var key = Encoding.UTF8.GetBytes("12345678");
-            var iv = Encoding.UTF8.GetBytes("12345678");
+            var key = Encoding.UTF8.GetBytes("11111111");
+            var iv = Encoding.UTF8.GetBytes("11111111");
             var cripto = new Cripto<MessageDTO>(key, iv);
             var user = HttpContext.Request.Headers["user"];
             cancellationTokenSource = new UserCancellationTokenSource(user);
