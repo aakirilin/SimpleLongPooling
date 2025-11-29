@@ -94,8 +94,8 @@ Adding a message to the queue
 ```C#
 MessageQueuePool message;
 message.Enqueue(new Message() { 
-    Channel = reqest.Channel, 
-    Text = reqest.Message, 
-    User = reqest.User 
+    Channel = "Channel1", 
+    Text = "Text", 
+    User = "User"
 });        
 ```
