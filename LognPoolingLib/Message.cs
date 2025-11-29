@@ -12,7 +12,7 @@ namespace LognPoolingLib
         {
             return new MessageDTO()
             {
-                Сhannel = message.Сhannel,
+                Channel = message.Сhannel,
                 Text = message.Text
             };
         }
@@ -20,8 +20,8 @@ namespace LognPoolingLib
 
     public class MessageDTO()
     {
-        [JsonPropertyName("Сhannel")]
-        public string Сhannel { get; set; }
+        [JsonPropertyName("Channel")]
+        public string Channel { get; set; }
 
         [JsonPropertyName("Text")]
         public string Text { get; set; }

@@ -26,18 +26,26 @@ namespace WebApplicationTestLongPooling.Controllers
         }
 
         [HttpGet]
-        public async Task<MessageDTO> Get()
+        public async Task<string> Get()
         {
+            var key = Encoding.UTF8.GetBytes("12345678");
+            var iv = Encoding.UTF8.GetBytes("12345678");
+            var cripto = new Cripto<MessageDTO>(key, iv);
             var user = HttpContext.Request.Headers["user"];
             cancellationTokenSource = new UserCancellationTokenSource(user);
 
             var count = this.messageQueuePool.Count(user);
 
             Message longPoolingServiceMessage = null;
+            MessageDTO messageDTO = null;
+            string encryptObject = null;
             if (count > 0)
             {
                 longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
-                return (MessageDTO)longPoolingServiceMessage;
+                messageDTO = (MessageDTO)longPoolingServiceMessage;
+
+                encryptObject = cripto.EncryptObject(messageDTO);
+                return encryptObject;
             }
 
             try
@@ -47,7 +55,10 @@ namespace WebApplicationTestLongPooling.Controllers
             catch (TaskCanceledException e) { }
 
             longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
-            return (MessageDTO)longPoolingServiceMessage;
+            messageDTO = (MessageDTO)longPoolingServiceMessage;
+
+            encryptObject = cripto.EncryptObject(messageDTO);
+            return encryptObject;
         }
     }
 }

@@ -1,13 +1,13 @@
-@WebApplicationTestLongPooling_HostAddress = http://localhost:5076
+@WebApplicationTestLongPooling_HostAddress = http://localhost:5000
 
 POST {{WebApplicationTestLongPooling_HostAddress}}/AddMessage
 Accept: application/json
 Content-type: application/json
 
 {
-    "Ñhannel" : "channel2",
+    "Ñhannel" : "channel1",
     "Message" : "-11-",
-    "User" : "user"
+    "User" : "user1"
 }
 
 ###

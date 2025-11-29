@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using System.Text.Json;
 
 namespace LognPoolingLib
@@ -12,12 +13,24 @@ namespace LognPoolingLib
         public event Action<MessageDTO> MessageDelivered;
 
         private Dictionary<string, EventManager> chanals;
+        private byte[] key;
+        private byte[] iv;
 
-        public LongPoolingClient(string user)
+        public LongPoolingClient(byte[] key, byte[] iv)
         {
             this.httpClient = new HttpClient();
-            this.httpClient.DefaultRequestHeaders.Add("user", user);
             this.chanals = new Dictionary<string, EventManager>();
+            this.key = key;
+            this.iv = iv;
+        }
+
+        public void SetHeaders(Dictionary<string, string> headers)
+        {
+            this.httpClient.DefaultRequestHeaders.Clear();
+            foreach (var kvp in headers)
+            {
+                this.httpClient.DefaultRequestHeaders.Add(kvp.Key, kvp.Value);
+            }
         }
 
         public void Start(string baseUrl)
@@ -29,8 +42,9 @@ namespace LognPoolingLib
                 {
                     try
                     {
+                        var cripto = new Cripto<MessageDTO>(key, iv);
                         var stringResponce = await httpClient.GetStringAsync(baseUrl);
-                        var message = JsonSerializer.Deserialize<MessageDTO>(stringResponce);
+                        var message = cripto.DecryptObject(stringResponce);
 
                         OnMessageDelivered(message);
                     }
@@ -55,9 +69,9 @@ namespace LognPoolingLib
         public void OnMessageDelivered(MessageDTO message)
         {
             MessageDelivered?.Invoke(message);
-            if (chanals.ContainsKey(message.Сhannel))
+            if (chanals.ContainsKey(message.Channel))
             {
-                chanals[message.Сhannel].CallEvent(message.Text);
+                chanals[message.Channel].CallEvent(message.Text);
             }
         }
 
