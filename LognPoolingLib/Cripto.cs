@@ -22,7 +22,7 @@ namespace LognPoolingLib
 
         public string Crypt(string text)
         {
-            SymmetricAlgorithm algorithm = DES.Create();
+            SymmetricAlgorithm algorithm = Aes.Create();
             ICryptoTransform transform = algorithm.CreateEncryptor(key, iv);
             byte[] inputbuffer = Encoding.Unicode.GetBytes(text);
             byte[] outputBuffer = transform.TransformFinalBlock(inputbuffer, 0, inputbuffer.Length);
@@ -31,7 +31,7 @@ namespace LognPoolingLib
 
         public string Decrypt(string text)
         {
-            SymmetricAlgorithm algorithm = DES.Create();
+            SymmetricAlgorithm algorithm = Aes.Create();
             ICryptoTransform transform = algorithm.CreateDecryptor(key, iv);
             byte[] inputbuffer = Convert.FromBase64String(text);
             byte[] outputBuffer = transform.TransformFinalBlock(inputbuffer, 0, inputbuffer.Length);

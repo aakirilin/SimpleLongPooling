@@ -1,13 +1,31 @@
 A simple implementation of long pooling for asp.net with an example. LognPoolingLib is actually the library itself, WebApplicationTestLongPooling is an example of usage.
 
+Usage example:
+Creating a client.
 
-Usage example
+```C#
+var url = "http://localhost:5000/loongPooling";
+var key = Encoding.UTF8.GetBytes("1111111111111111");
+var iv = Encoding.UTF8.GetBytes("1111111111111111");
+var client = new LongPoolingClient(key, iv);
+```
+
+The client is authorized using the request header. It is recommended to put an encrypted token string in this header.
+The example shows the simplest authorization, it should not be used in a production environment.
+
+```C#
+var headers = new Dictionary<string, string>();
+headers.Add("user", "user1");
+client.SetHeaders(headers);
+```
+
+
 Client
 
 ```C#
 var url = "http://localhost:5000/loongPooling";
-var key = Encoding.UTF8.GetBytes("11111111");
-var iv = Encoding.UTF8.GetBytes("11111111");
+var key = Encoding.UTF8.GetBytes("1111111111111111");
+var iv = Encoding.UTF8.GetBytes("1111111111111111");
 
 var client = new LongPoolingClient(key, iv);
 
@@ -55,8 +73,8 @@ public class LoongPoolingController : ControllerBase
     [HttpGet]
     public async Task<MessageDTO> Get()
     {
-        var key = Encoding.UTF8.GetBytes("11111111");
-        var iv = Encoding.UTF8.GetBytes("11111111");
+        var key = Encoding.UTF8.GetBytes("1111111111111111");
+        var iv = Encoding.UTF8.GetBytes("1111111111111111");
         var cripto = new Cripto<MessageDTO>(key, iv);
         var user = HttpContext.Request.Headers["user"];
         cancellationTokenSource = new UserCancellationTokenSource(user);
@@ -99,3 +117,4 @@ message.Enqueue(new Message() {
     User = "User"
 });        
 ```
+
