@@ -16,6 +16,7 @@ namespace LognPoolingLib
         private Dictionary<string, EventManager> chanals;
         private byte[] key;
         private byte[] iv;
+        private Stream responce = null;
 
         public LongPoolingClient(byte[] key, byte[] iv)
         {
@@ -34,6 +35,22 @@ namespace LognPoolingLib
             }
         }
 
+        private async Task Connect(string baseUrl)
+        {
+            responce?.Close();
+            responce?.Dispose();
+            responce = null;
+            while (!cts.IsCancellationRequested && responce == null)
+            {
+                try
+                {
+                    await Task.Delay(1000);
+                    responce = await httpClient.GetStreamAsync(baseUrl);
+                }
+                catch (HttpRequestException ex) { }
+            }
+        }
+
         public void Start(string baseUrl)
         {
             cts = new CancellationTokenSource();
@@ -41,7 +58,8 @@ namespace LognPoolingLib
             {
                 var cripto = new Cripto<MessageDTO>(key, iv);
                 var strBuilder = new StringBuilder();
-                var responce = await httpClient.GetStreamAsync(baseUrl);
+
+                await Connect(baseUrl);
                 while (!cts.IsCancellationRequested)
                 {
                     try
@@ -59,11 +77,19 @@ namespace LognPoolingLib
                             var message = cripto.DecryptObject(messageString);
                             OnMessageDelivered(message);
                         }
-
-
                     }
-                    catch (HttpRequestException ex) { }
-                    catch (TaskCanceledException ex) { }
+                    catch (ArgumentException ex) 
+                    {
+                        await Connect(baseUrl);
+                    }
+                    catch (IOException ex) 
+                    {
+                        await Connect(baseUrl);
+                    }
+                    catch (HttpRequestException ex) 
+                    {
+                        await Connect(baseUrl);
+                    }
                 }
             }, cts.Token);
 
@@ -78,6 +104,8 @@ namespace LognPoolingLib
         public void Dispose()
         {
             bw?.Dispose();
+            responce?.Close();
+            responce?.Dispose();
         }
 
         public void OnMessageDelivered(MessageDTO message)

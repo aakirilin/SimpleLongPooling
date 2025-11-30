@@ -87,9 +87,13 @@ namespace WebApplicationTestLongPooling.Controllers
             var user = HttpContext.Request.Headers["user"];
             cancellationTokenSource = new UserCancellationTokenSource(user);
 
-
             while (!getCancellationTokenSource.IsCancellationRequested)
             {
+                if (this.HttpContext.RequestAborted.IsCancellationRequested)
+                {
+                    getCancellationTokenSource.Cancel();
+                }
+
                 var count = this.messageQueuePool.Count(user);
                 if (count > 0)
                 {
@@ -97,21 +101,19 @@ namespace WebApplicationTestLongPooling.Controllers
                     var messageDTO = (MessageDTO)longPoolingServiceMessage;
 
                     var encryptObject = cripto.EncryptObject(messageDTO);
-                    yield return encryptObject.PadRight(1024, new char());
-                    
-                    Console.WriteLine(encryptObject);
+                    yield return encryptObject.PadRight(1024, new char());                    
                 }
                 else
                 {
                     try
                     {
-                        await Task.Delay(1000, cancellationTokenSource.Token);
+                        await Task.Delay(10000, cancellationTokenSource.Token);
                     }
                     catch (TaskCanceledException e)
                     {
                         cancellationTokenSource = new UserCancellationTokenSource(user);
                     }
-                }
+                }                
             }
         }
 
