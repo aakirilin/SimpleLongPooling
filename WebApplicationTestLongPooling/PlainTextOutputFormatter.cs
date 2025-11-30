@@ -9,7 +9,6 @@ namespace WebApplicationTestLongPooling
         public PlainTextOutputFormatter()
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/message"));
-            //SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/vcard"));
 
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);

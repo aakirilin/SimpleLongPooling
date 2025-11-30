@@ -24,6 +24,10 @@ client.SetHeaders(headers);
 Client
 
 ```C#
+
+Console.WriteLine("Input user name");
+var user = Console.ReadLine();
+
 var url = "http://localhost:5000/loongPooling";
 var key = Encoding.UTF8.GetBytes("1111111111111111");
 var iv = Encoding.UTF8.GetBytes("1111111111111111");
@@ -31,7 +35,7 @@ var iv = Encoding.UTF8.GetBytes("1111111111111111");
 var client = new LongPoolingClient(key, iv);
 
 var headers = new Dictionary<string, string>();
-headers.Add("user", "user");
+headers.Add("user", user);
 headers.Add("Accept", "text/message");
 
 client.SetHeaders(headers);
@@ -121,6 +125,52 @@ public class LoongPoolingController : ControllerBase, IDisposable
         getCancellationTokenSource.Dispose();
     }
 }
+```
+
+
+Add the PlainTextOutputFormatter class
+```C#
+public class PlainTextOutputFormatter : TextOutputFormatter
+{
+    public PlainTextOutputFormatter()
+    {
+        SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/message"));
+
+        SupportedEncodings.Add(Encoding.UTF8);
+        SupportedEncodings.Add(Encoding.Unicode);
+        SupportedEncodings.Add(Encoding.Default);
+    }
+
+    protected override bool CanWriteType(Type? type)
+        => typeof(IAsyncEnumerable<string>).IsAssignableFrom(type);
+
+    public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+    {
+        var response = context.HttpContext.Response;
+
+        var asyncEnumerable = context.Object as IAsyncEnumerable<string>;
+        if (asyncEnumerable != null)
+        {
+            await using var writer = context.WriterFactory(response.Body, selectedEncoding);
+            await foreach (var value in asyncEnumerable)
+            {
+                if (value != null)
+                {
+                    await writer.WriteAsync(value);
+                    await writer.FlushAsync();
+                }
+            }
+        }
+    }
+}
+```
+
+ and connect it to the project.
+```C#
+builder.Services.AddControllers(options =>
+{
+    options.OutputFormatters.Add(new PlainTextOutputFormatter());
+});
 ```
 
 Adding a message to the queue

@@ -49,6 +49,8 @@ namespace ConsoleApp
             }
 */
 
+            Console.WriteLine("Input user name");
+            var user = Console.ReadLine();
 
             var url = "http://localhost:5000/loongPooling";
             var key = Encoding.UTF8.GetBytes("1111111111111111");
@@ -57,7 +59,7 @@ namespace ConsoleApp
             var client = new LongPoolingClient(key, iv);
 
             var headers = new Dictionary<string, string>();
-            headers.Add("user", "user");
+            headers.Add("user", user);
             headers.Add("Accept", "text/message");
 
             client.SetHeaders(headers);
