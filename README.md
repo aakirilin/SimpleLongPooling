@@ -15,7 +15,7 @@ The example shows the simplest authorization, it should not be used in a product
 
 ```C#
 var headers = new Dictionary<string, string>();
-headers.Add("user", "user1");
+headers.Add("user", "user");
 headers.Add("Accept", "text/message");
 client.SetHeaders(headers);
 ```
@@ -84,46 +84,6 @@ public class LoongPoolingController : ControllerBase, IDisposable
             await Task.Delay(1000);
         }
     }
-
-    /*
-    [HttpGet]
-    public async IAsyncEnumerable<string> Get()
-    {
-        var key = Encoding.UTF8.GetBytes("1111111111111111");
-        var iv = Encoding.UTF8.GetBytes("1111111111111111");
-        var cripto = new Cripto<MessageDTO>(key, iv);
-        var user = HttpContext.Request.Headers["user"];
-        cancellationTokenSource = new UserCancellationTokenSource(user);
-
-        var count = this.messageQueuePool.Count(user);
-
-        Message longPoolingServiceMessage = null;
-        MessageDTO messageDTO = null;
-        string encryptObject = null;
-        while (count > 0)
-        {
-            longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
-            messageDTO = (MessageDTO)longPoolingServiceMessage;
-
-            encryptObject = cripto.EncryptObject(messageDTO);
-            yield return encryptObject;
-
-            count = this.messageQueuePool.Count(user);
-        }
-
-        try
-        {
-            await Task.Delay(Timeout.Infinite, cancellationTokenSource.Token);
-        }
-        catch (TaskCanceledException e) { }
-
-        longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
-        messageDTO = (MessageDTO)longPoolingServiceMessage;
-
-        encryptObject = cripto.EncryptObject(messageDTO);
-        yield return encryptObject;
-    }
-    */
 
     [HttpGet]
     public async IAsyncEnumerable<string> GetNew()
