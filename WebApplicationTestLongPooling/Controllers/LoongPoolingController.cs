@@ -27,17 +27,6 @@ namespace WebApplicationTestLongPooling.Controllers
             };
         }
 
-        [HttpGet("test")]
-        public async IAsyncEnumerable<string> GetAsync()
-        {
-            int i = 0;
-            while (true)
-            {
-                yield return ("test " + i++).PadRight(10);
-                await Task.Delay(1000);
-            }
-        }
-
         [HttpGet]
         public async IAsyncEnumerable<string> GetNew()
         {
