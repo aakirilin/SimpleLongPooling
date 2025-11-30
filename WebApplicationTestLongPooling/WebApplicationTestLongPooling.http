@@ -5,10 +5,12 @@ Accept: application/json
 Content-type: application/json
 
 {
-    "Ñhannel" : "channel1",
-    "Message" : "-11-",
-    "User" : "user1"
+    "Ñhannel" : "channel2",
+    "Message" : "-22-",
+    "User" : "user"
 }
 
 ###
 
+Get {{WebApplicationTestLongPooling_HostAddress}}/LoongPooling/test
+Accept: text/message

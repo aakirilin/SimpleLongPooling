@@ -9,7 +9,7 @@ namespace LognPoolingLib
         public string Text {  get; set; }
 
         public static explicit operator MessageDTO(Message message)
-        {
+        {            
             return new MessageDTO()
             {
                 Channel = message.Сhannel,

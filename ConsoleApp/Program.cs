@@ -1,5 +1,7 @@
 ﻿using LognPoolingLib;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace ConsoleApp
@@ -9,21 +11,44 @@ namespace ConsoleApp
         static async Task Main(string[] args)
         {
             /*
+            var url = "http://localhost:5000/loongPooling";
+
+            var socketsHandler = new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+            };
+            var client = new HttpClient(socketsHandler);
+
+            client.DefaultRequestHeaders.Add("user", "user");
+
+            client
+               .DefaultRequestHeaders
+               .Accept
+               .Add(new MediaTypeWithQualityHeaderValue("text/message"));
+
+            var responce = await client.GetStreamAsync(url);
+
+            var strBuilder = new StringBuilder();
             var key = Encoding.UTF8.GetBytes("1111111111111111");
             var iv = Encoding.UTF8.GetBytes("1111111111111111");
-
             var cripto = new Cripto<MessageDTO>(key, iv);
-
-            var message = new MessageDTO()
+            while (true)
             {
-                Channel = "Channel1",
-                Text = "Text1"
-            };
+                strBuilder.Clear();
+                char[] buffer = new char[1024];
+                var reader = new StreamReader(responce);
 
-            var smessage = cripto.EncryptObject(message);
+                await reader.ReadBlockAsync(buffer, 0, buffer.Length);
+                strBuilder.Append(buffer);
+                var messageString = strBuilder.ToString().Trim(new char());
 
-            var rmessage = cripto.DecryptObject(smessage);
-            */
+                if (!String.IsNullOrWhiteSpace(messageString))
+                {
+                    var message = cripto.DecryptObject(messageString);
+                }
+            }
+*/
+
 
             var url = "http://localhost:5000/loongPooling";
             var key = Encoding.UTF8.GetBytes("1111111111111111");
@@ -32,7 +57,8 @@ namespace ConsoleApp
             var client = new LongPoolingClient(key, iv);
 
             var headers = new Dictionary<string, string>();
-            headers.Add("user", "user1");
+            headers.Add("user", "user");
+            headers.Add("Accept", "text/message");
 
             client.SetHeaders(headers);
 
@@ -51,6 +77,7 @@ namespace ConsoleApp
             {
                 await Task.Delay(1000);
             }
+
         }
     }
 }

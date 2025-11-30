@@ -10,13 +10,15 @@ namespace WebApplicationTestLongPooling.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class LoongPoolingController : ControllerBase
+    public class LoongPoolingController : ControllerBase, IDisposable
     {
         private readonly MessageQueuePool messageQueuePool;
         UserCancellationTokenSource cancellationTokenSource;
+        CancellationTokenSource getCancellationTokenSource;
 
         public LoongPoolingController(MessageQueuePool message)
         {
+            getCancellationTokenSource = new CancellationTokenSource();
             this.messageQueuePool = message;
 
             this.messageQueuePool.AddMessageEvent += (m) =>
@@ -25,8 +27,20 @@ namespace WebApplicationTestLongPooling.Controllers
             };
         }
 
+        [HttpGet("test")]
+        public async IAsyncEnumerable<string> GetAsync()
+        {
+            int i = 0;
+            while (true)
+            {
+                yield return ("test " + i++).PadRight(10);
+                await Task.Delay(1000);
+            }
+        }
+
+        /*
         [HttpGet]
-        public async Task<string> Get()
+        public async IAsyncEnumerable<string> Get()
         {
             var key = Encoding.UTF8.GetBytes("1111111111111111");
             var iv = Encoding.UTF8.GetBytes("1111111111111111");
@@ -39,13 +53,15 @@ namespace WebApplicationTestLongPooling.Controllers
             Message longPoolingServiceMessage = null;
             MessageDTO messageDTO = null;
             string encryptObject = null;
-            if (count > 0)
+            while (count > 0)
             {
                 longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
                 messageDTO = (MessageDTO)longPoolingServiceMessage;
 
                 encryptObject = cripto.EncryptObject(messageDTO);
-                return encryptObject;
+                yield return encryptObject;
+
+                count = this.messageQueuePool.Count(user);
             }
 
             try
@@ -58,7 +74,53 @@ namespace WebApplicationTestLongPooling.Controllers
             messageDTO = (MessageDTO)longPoolingServiceMessage;
 
             encryptObject = cripto.EncryptObject(messageDTO);
-            return encryptObject;
+            yield return encryptObject;
+        }
+        */
+
+        [HttpGet]
+        public async IAsyncEnumerable<string> GetNew()
+        {
+            var key = Encoding.UTF8.GetBytes("1111111111111111");
+            var iv = Encoding.UTF8.GetBytes("1111111111111111");
+            var cripto = new Cripto<MessageDTO>(key, iv);
+            var user = HttpContext.Request.Headers["user"];
+            cancellationTokenSource = new UserCancellationTokenSource(user);
+
+
+            while (!getCancellationTokenSource.IsCancellationRequested)
+            {
+                var count = this.messageQueuePool.Count(user);
+                if (count > 0)
+                {
+                    var longPoolingServiceMessage = this.messageQueuePool.Dequeue(user);
+                    var messageDTO = (MessageDTO)longPoolingServiceMessage;
+
+                    var encryptObject = cripto.EncryptObject(messageDTO);
+                    yield return encryptObject.PadRight(1024, new char());
+                    
+                    Console.WriteLine(encryptObject);
+                }
+                else
+                {
+                    try
+                    {
+                        await Task.Delay(1000, cancellationTokenSource.Token);
+                    }
+                    catch (TaskCanceledException e)
+                    {
+                        cancellationTokenSource = new UserCancellationTokenSource(user);
+                    }
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            cancellationTokenSource.Cancel();
+            getCancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
+            getCancellationTokenSource.Dispose();
         }
     }
 }

@@ -10,7 +10,10 @@ namespace WebApplicationTestLongPooling
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.OutputFormatters.Add(new PlainTextOutputFormatter());
+            });
 
             var messageQueuePoolOptions = new MessageQueuePoolOptions()
             {
