@@ -105,6 +105,7 @@ public class LoongPoolingController : ControllerBase, IDisposable
             }
             else
             {
+                yield return new string(new char(), 1024);
                 try
                 {
                     await Task.Delay(10000, cancellationTokenSource.Token);

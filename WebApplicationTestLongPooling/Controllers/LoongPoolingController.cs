@@ -54,6 +54,7 @@ namespace WebApplicationTestLongPooling.Controllers
                 }
                 else
                 {
+                    yield return new string(new char(), 1024);
                     try
                     {
                         await Task.Delay(10000, cancellationTokenSource.Token);
@@ -61,7 +62,7 @@ namespace WebApplicationTestLongPooling.Controllers
                     catch (TaskCanceledException e)
                     {
                         cancellationTokenSource = new UserCancellationTokenSource(user);
-                    }
+                    }                    
                 }                
             }
         }

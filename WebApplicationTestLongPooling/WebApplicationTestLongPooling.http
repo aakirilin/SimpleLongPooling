@@ -6,8 +6,8 @@ Content-type: application/json
 
 {
     "Ñhannel" : "channel1",
-    "Message" : "-22-",
-    "User" : "user1"
+    "Message" : "-00-",
+    "User" : "user"
 }
 
 ###
